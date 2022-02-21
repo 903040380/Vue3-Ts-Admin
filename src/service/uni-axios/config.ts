@@ -1,12 +1,11 @@
 let BASE_URL = ''
-let BASE_URL_NAME = ''
+const TIME_OUT = 10000
 if (process.env.NODE_ENV === 'development') {
-  BASE_URL = 'development'
-  BASE_URL_NAME = 'development'
+  BASE_URL = 'http://152.136.185.210:7878/api/hy66'
 } else if (process.env.NODE_ENV === 'production') {
   BASE_URL = 'production'
-  BASE_URL_NAME = 'production'
 } else {
   BASE_URL = 'text'
-  BASE_URL_NAME = 'text'
 }
+
+export { BASE_URL, TIME_OUT }
