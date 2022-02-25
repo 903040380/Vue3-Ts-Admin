@@ -11,6 +11,7 @@ import localCache from '@/utils/cache'
 import { IRootState } from '../types'
 import { ILoginState } from './types'
 import { IAccount } from '@/service/login/types'
+import { mapMenusToRoutes } from '@/utils/map-menus'
 
 const loginModule: Module<ILoginState, IRootState> = {
   namespaced: true,
@@ -28,8 +29,12 @@ const loginModule: Module<ILoginState, IRootState> = {
     changeUserInfo(state, userInfo: string) {
       state.userInfo = userInfo
     },
-    changeUserMenus(state, userMenus: string) {
+    changeUserMenus(state, userMenus: any) {
       state.userMenus = userMenus
+      const routes = mapMenusToRoutes(userMenus)
+      routes.forEach((route) => {
+        router.addRoute('main', route)
+      })
     }
   },
   actions: {

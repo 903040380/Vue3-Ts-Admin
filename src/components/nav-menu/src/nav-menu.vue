@@ -26,7 +26,11 @@
               <span>{{ item.name }}</span>
             </template>
             <template v-for="subitem in item.children" :key="subitem.id">
-              <el-menu-item class="el-menu-item" :index="subitem.id + ''">
+              <el-menu-item
+                @click="handleItemClick(subitem)"
+                class="el-menu-item"
+                :index="subitem.id + ''"
+              >
                 <template #title>
                   <component
                     v-if="subitem.icon"
@@ -55,6 +59,7 @@
 <script lang="ts">
 import { computed, defineComponent } from 'vue'
 import { useStore } from '@/store'
+import { useRouter } from 'vue-router'
 export default defineComponent({
   props: {
     collapse: {
@@ -64,6 +69,7 @@ export default defineComponent({
   },
   setup() {
     const store = useStore()
+    const router = useRouter()
     const userMenus = computed(() => store.state.login.userMenus)
     const iconCut = (name: string) => {
       let stack: any = []
@@ -77,9 +83,17 @@ export default defineComponent({
         result.push(stack.pop())
       }
       result[0] = result[0].toUpperCase()
+      if (name === 'el-icon-chat-line-round') {
+        return 'ChatLineRound'
+      }
       return result.join('')
     }
-    return { userMenus, iconCut }
+    const handleItemClick = (item: any) => {
+      router.push({
+        path: item.url ?? '/not-found'
+      })
+    }
+    return { userMenus, iconCut, handleItemClick }
   }
 })
 </script>
