@@ -11,7 +11,7 @@ class UniAxios {
   instance: AxiosInstance
   interceptors?: UniInterceptors
   showLoading: boolean
-  loading?: any
+  loading?: { close: () => void }
   constructor(config: UniConfig) {
     this.instance = axios.create(config)
     this.interceptors = config.interceptors
@@ -19,7 +19,7 @@ class UniAxios {
     //全局拦截器
     this.instance.interceptors.request.use(
       (value) => {
-        console.log('request success(全局拦截器)')
+        //console.log('request success(全局拦截器)')
 
         if (this.showLoading) {
           this.loading = ElLoading.service({
@@ -32,20 +32,20 @@ class UniAxios {
         return value
       },
       (error) => {
-        console.log('request failure(全局拦截器)')
+        //console.log('request failure(全局拦截器)')
         return error
       }
     )
     this.instance.interceptors.response.use(
       (value) => {
-        console.log('request success(全局拦截器)')
+        //console.log('request success(全局拦截器)')
 
         this.loading?.close()
 
         return value //axios的response对象中的data才是真实数据
       },
       (error) => {
-        console.log('request failure(全局拦截器)')
+        //console.log('request failure(全局拦截器)')
 
         this.loading?.close()
 
