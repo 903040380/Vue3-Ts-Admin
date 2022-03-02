@@ -1,7 +1,7 @@
 import uniAxios from '..'
+import { IDataType } from '../main/system/type'
 import {
   IAccount,
-  IDataType,
   ILoginResult,
   IUserInfoResult,
   IUserMenusResult
