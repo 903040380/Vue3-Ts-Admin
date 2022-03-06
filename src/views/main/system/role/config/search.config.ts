@@ -3,13 +3,6 @@ import { IForm } from '@/common/common-form/src/types'
 export const searchFormConfig: IForm = {
   formItems: [
     {
-      field: 'id',
-      type: 'input',
-      label: 'id',
-      placeholder: '请输入id',
-      rules: []
-    },
-    {
       field: 'name',
       type: 'input',
       label: '角色名称',

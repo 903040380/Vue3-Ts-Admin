@@ -42,17 +42,20 @@ const loginModule: Module<ILoginState, IRootState> = {
     }
   },
   actions: {
-    async accountLoginAction({ commit }, payload: IAccount) {
+    async accountLoginAction({ commit, dispatch }, payload: IAccount) {
+      //实现登录逻辑
       const loginResult = await accountLoginRequest(payload)
       const { id, token } = loginResult.data
       commit('changeToken', token)
       localCache.setCache('token', token)
-
+      //发送初始化请求
+      dispatch('getInitialDataAction', null, { root: true })
+      //请求用户信息
       const userInfoResult = await requestUserInfoById(id)
       const userInfo = userInfoResult.data
       commit('changeUserInfo', userInfo)
       localCache.setCache('userInfo', userInfo)
-
+      //请求菜单信息
       const userMenusResult = await requestUserMenusByRoleId(userInfo.role.id)
       const userMenus = userMenusResult.data
       commit('changeUserMenus', userMenus)
@@ -60,10 +63,12 @@ const loginModule: Module<ILoginState, IRootState> = {
 
       router.push('/main')
     },
-    loadLocalLogin({ commit }) {
+    loadLocalLogin({ commit, dispatch }) {
       const token = localCache.getCache('token')
       if (token) {
         commit('changeToken', token)
+        //发送初始化请求
+        dispatch('getInitialDataAction', null, { root: true })
       }
       const userInfo = localCache.getCache('userInfo')
       if (userInfo) {

@@ -7,10 +7,9 @@
       v-model:page="pageInfo"
     >
       <template #header-handler>
-        <el-button v-if="isCreate" type="primary">新建用户</el-button>
-        <el-button type="primary"
-          ><refresh style="width: 1em; height: 1em"></refresh
-        ></el-button>
+        <el-button @click="handleNewClick" v-if="isCreate" type="primary">
+          新建用户
+        </el-button>
       </template>
 
       <template #enable="scope">
@@ -27,13 +26,19 @@
       <template #updateAt="scope">
         <span>{{ $filters.formatTime(scope.row.createAt) }}</span>
       </template>
-      <template #handler>
+      <template #handler="scope">
         <div class="handler">
-          <el-button v-if="isUpdate" type="text"
+          <el-button
+            @click="handleEditClick(scope.row)"
+            v-if="isUpdate"
+            type="text"
             ><edit style="width: 1em; height: 1em; margin-right: 8px"></edit
             >编辑</el-button
           >
-          <el-button v-if="isDelete" type="text"
+          <el-button
+            @click="handleDeleteClick(scope.row)"
+            v-if="isDelete"
+            type="text"
             ><remove style="width: 1em; height: 1em; margin-right: 8px"></remove
             >删除</el-button
           >
@@ -69,7 +74,8 @@ export default defineComponent({
       required: true
     }
   },
-  setup(props) {
+  emit: ['newBtnClick', 'editBtnClick'],
+  setup(props, { emit }) {
     const store = useStore()
     //获取操作权限
     const isCreate = usePermission(props.pageName, 'create')
@@ -78,7 +84,7 @@ export default defineComponent({
     const isQuery = usePermission(props.pageName, 'query')
 
     //双向绑定pageInfo
-    const pageInfo = ref({ currentPage: 0, pageSize: 10 })
+    const pageInfo = ref({ currentPage: 1, pageSize: 10 })
     watch(pageInfo, () => getPageData())
 
     //请求数据
@@ -87,7 +93,7 @@ export default defineComponent({
       store.dispatch('system/getPageListAction', {
         pageName: props.pageName,
         queryInfo: {
-          offset: pageInfo.value.currentPage * pageInfo.value.pageSize,
+          offset: (pageInfo.value.currentPage - 1) * pageInfo.value.pageSize,
           size: pageInfo.value.pageSize,
           ...queryInfo
         }
@@ -112,7 +118,19 @@ export default defineComponent({
         return true
       }
     )
-
+    //删除编辑新建
+    const handleDeleteClick = (item: any) => {
+      store.dispatch('system/deletePageDataAction', {
+        pageName: props.pageName,
+        id: item.id
+      })
+    }
+    const handleNewClick = () => {
+      emit('newBtnClick')
+    }
+    const handleEditClick = (item: any) => {
+      emit('editBtnClick', item)
+    }
     return {
       dataList,
       dataCount,
@@ -121,7 +139,10 @@ export default defineComponent({
       otherPropSlots,
       isCreate,
       isUpdate,
-      isDelete
+      isDelete,
+      handleDeleteClick,
+      handleNewClick,
+      handleEditClick
     }
   },
   components: { CommonTable }

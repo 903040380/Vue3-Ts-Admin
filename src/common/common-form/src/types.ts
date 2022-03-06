@@ -7,6 +7,7 @@ export interface IFormItem {
   type: IFormType
   options?: any[]
   otherOptions?: any
+  isHidden?: boolean
 }
 export interface IForm {
   formItems: IFormItem[]
